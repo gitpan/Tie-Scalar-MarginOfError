@@ -45,7 +45,7 @@ See t/Tie-Scalar-MarginOfError.t for that very example.
 use strict;
 use warnings;
 
-our $VERSION = "0.02";
+our $VERSION = "0.03";
 
 use Tie::Scalar;
 use base 'Tie::StdScalar';
@@ -74,9 +74,22 @@ reactor. But the variable is tied, so it can be considered slower than
 normal. And if you are depending on the reactor not going critical, I
 wouldn't be using this code. Or perl, come to think of it.
 
+=head1 HAIKU
+
+ Want to stay within
+ The limit set by the world
+ Breathe in this module
+
+This arose as Tony (http://www.tmtm.com/nothing/) suggested to me that
+if I can't write the documentation of a module in haiku, then it is
+doing too many things. As I (also) believe that modules should be
+responsible for one concept, and one only. 
+
+Also, I have no poetical ability, so forgive my clumsy attempt.
+
 =head1 SEE ALSO
 
-perldoc perltie
+perldoc perltie 
 
 =head1 THANKS
 
