@@ -1,4 +1,4 @@
-Tie-Scalar-MarginOfError version 0.01
+Tie-Scalar-MarginOfError version 0.02
 =====================================
 
 Give a scalar a margin of error within which it must stay.

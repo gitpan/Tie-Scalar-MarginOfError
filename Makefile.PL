@@ -4,7 +4,11 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME              => 'Tie::Scalar::MarginOfError',
     VERSION_FROM      => 'lib/Tie/Scalar/MarginOfError.pm',
-    PREREQ_PM         => {},
+    PREREQ_PM         => 
+	{ 
+		'Tie::Scalar' => '1.00',
+		'Test::More'  => '0.47',
+	},
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (AUTHOR         => 'Stray Toaster <coder@stray-toaster.co.uk>') : ()),
 );

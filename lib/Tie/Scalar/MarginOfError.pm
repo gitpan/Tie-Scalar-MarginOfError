@@ -8,28 +8,44 @@ Tie::Scalar::MarginOfError - Scalars that have margins of error
 
 	use Tie::Scalar::MarginOfError;
 
-	tie my $val, 'Tie::Scalar::MarginOfError', { tolerance => 0.1, initial_value => 1 };
+	tie my $val, 'Tie::Scalar::MarginOfError', 
+		{ 
+			tolerance     => 0.1, 
+			initial_value => 1,
+			callback      => \&some_sub, 
+		};
 
 
 =head1 DESCRIPTION
 
 This allows you to have a scalar which has to stay within a certain
-margin of error. Your code will die if the scalar's value goes outside
-this range.
+margin of error. Your code will die (or execute what was passed in via
+the 'callback' subref) if the scalar's value goes outside this range.
 
 You tie a variable, and give it an initial value and a tolerance. Your
-code will die if the value gets beyond +/- whatever you have set the
-tolerance to be.
+code will die (or execute what was given in the callback subref) if the 
+value gets beyond +/- whatever you have set the tolerance to be.
 
-In the SYNOPSIS example, $val will cause your code to explode if it gets
-above 1.1 or below 0.9.
+In the SYNOPSIS example, $val will cause your code to execute &some_sub 
+if it gets above 1.1 or below 0.9.
+
+If no callback is defined, then the code will simply croak. 
+
+=head2 More on the callback
+
+If you do define a callback, then it will receive one argument, which is
+the Tie::Scalar::MarginOfError object. This means you can get out the
+initial value, if you wish to reset the variable once it exceeds the
+margin of error.
+
+See t/Tie-Scalar-MarginOfError.t for that very example.
 
 =cut
 
 use strict;
 use warnings;
 
-our $VERSION = "0.01";
+our $VERSION = "0.02";
 
 use Tie::Scalar;
 use base 'Tie::StdScalar';
@@ -38,10 +54,10 @@ use Carp;
 
 sub STORE {
 	my ($self, $val) = @_;
-	my $err = $$self->{tolerance};
 	if (($val > $$self->{initial_value} + $$self->{tolerance}) 
 		|| ($val < $$self->{initial_value} - $$self->{tolerance})) {
-		croak "$val is outside margin of error"; 
+		croak "$val is outside margin of error" unless my $subref = $$self->{callback}; 
+		$subref->($self);
 	}
 	$$self->{value} = $val;
 }
@@ -53,7 +69,7 @@ sub FETCH {
 
 =head1 CAVEATS
 
-Yes, you could use this to montior the core temperature of your nuclear
+Yes, you could use this to monitor the core temperature of your nuclear
 reactor. But the variable is tied, so it can be considered slower than
 normal. And if you are depending on the reactor not going critical, I
 wouldn't be using this code. Or perl, come to think of it.
@@ -65,6 +81,10 @@ perldoc perltie
 =head1 THANKS
 
 o Dave Cross, whose talk to Belfast.pm made me write this. Blame him.
+
+o Geert Jan Bex for the subref idea.
+
+o Steve Rushe for looking it over and being my personal ispell.
 
 =head1 BUGS
 
